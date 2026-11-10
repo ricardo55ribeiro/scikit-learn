@@ -607,11 +607,12 @@ def test_stratified_strategy_sparse_target(global_random_seed, csc_container):
 
 @pytest.mark.parametrize("csc_container", CSC_CONTAINERS)
 def test_most_frequent_and_prior_strategy_sparse_target(csc_container):
-    X = [[0]] * 5  # ignored
-    y = csc_container(np.array([[1, 0], [1, 3], [4, 0], [0, 1], [1, 0]]))
+    X = [[0]] * 5
+    y = csc_container(np.array([[1, 0, 4], [1, 3, 4], [4, 0, 4], [0, 1, 0], [1, 0, 1]]))
 
     n_samples = len(X)
-    y_expected = np.hstack([np.ones((n_samples, 1)), np.zeros((n_samples, 1))])
+    y_expected = np.tile([1, 0, 4], (n_samples, 1))
+
     for strategy in ("most_frequent", "prior"):
         clf = DummyClassifier(strategy=strategy, random_state=0)
         clf.fit(X, y)
