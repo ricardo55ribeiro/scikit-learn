@@ -361,6 +361,24 @@ def test_calinski_harabasz_score():
     pytest.approx(calinski_harabasz_score(X, labels), 45 * (40 - 4) / (5 * (4 - 1)))
 
 
+def test_calinski_harabasz_score_zero_within_dispersion():
+    X = [[0], [0], [10], [10], [20], [20]]
+    labels = [0, 0, 1, 1, 2, 2]
+
+    perfect_score = calinski_harabasz_score(X, labels)
+    coarser_score = calinski_harabasz_score(X, [0, 0, 1, 1, 1, 1])
+
+    X_near = [[0.1], [0], [10], [10], [20], [20]]
+    near_score = calinski_harabasz_score(X_near, labels)
+
+    assert perfect_score == np.inf
+    assert np.isfinite(near_score)
+    assert perfect_score > near_score > coarser_score
+
+    identical_score = calinski_harabasz_score([[1]] * 6, labels)
+    assert identical_score == 1.0
+
+
 def test_davies_bouldin_score():
     assert_raises_on_only_one_label(davies_bouldin_score)
     assert_raises_on_all_points_same_cluster(davies_bouldin_score)
